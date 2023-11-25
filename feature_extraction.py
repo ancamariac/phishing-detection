@@ -273,7 +273,41 @@ def check_insecure_forms(url):
    hostname = parsed_url.netloc
    return int('forms' in hostname)
 
+def feature_extraction(url):
+   dots_count = count_dots(url)
+   subdomain_level = get_subdomain_level(url)
+   path_level = get_path_level(url)
+   url_length = get_url_length(url)
+   dashes_count = count_dashes(url)
+   dashes_count_hostname = count_dashes_in_hostname(url)
+   at_symbol_count = count_at_symbol(url)
+   tilde_count = count_tilde_symbol(url)
+   underscore_count = count_underscore_symbol(url)
+   percent_count = count_percent_symbol(url)
+   query_count = count_query_components(url)
+   ampersand_count = count_amperstand_symbol(url)
+   hash_count = count_hash_symbol(url)
+   numeric_count = count_numeric_characters(url)
+   https = check_https(url)
+   ip_address = check_ip_address(url)
+   domain_in_subdomains = check_domain_in_subdomains(url)
+   domain_in_path = check_domain_in_path(url)
+   https_in_hostname = check_https_in_hostname(url)
+   hostname_length = count_hostname_length(url)
+   path_length = count_path_length(url)
+   query_length = count_query_length(url)
+   double_slash_in_paths = check_double_slash_in_paths(url)
+   ext_favicon = check_ext_favicon(url)
+   insecure_forms = check_insecure_forms(url)
+   
+   return [dots_count, subdomain_level, path_level, url_length, dashes_count, 
+           dashes_count_hostname, at_symbol_count, tilde_count, underscore_count, 
+           percent_count, query_count, ampersand_count, hash_count, numeric_count, 
+           https, ip_address, domain_in_subdomains, domain_in_path, https_in_hostname, 
+           hostname_length, path_length, query_length, double_slash_in_paths, ext_favicon, insecure_forms]
+   
+
 url = 'https://www.google.com/search?q=hello+world&rlz=1C1CHBF_enUS911US911&oq=hello+world&aqs=chrome..69i57j0l7.1234j0j7&sourceid=chrome&ie=UTF-8'
-path_level = check_domain_in_subdomains(url)
-print(f"The path level for the URL '{url}' is {path_level}.")
+result = feature_extraction(url)
+print(f"Feature extraction : {result}.")
 
