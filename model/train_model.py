@@ -56,6 +56,3 @@ print("XGBoost Accuracy:", xgb_accuracy)
 print("Decision Tree Accuracy:", dt_accuracy)
 print("Random Forest Accuracy:", rf_accuracy)
 print("KNN Accuracy:", knn_accuracy)
-
-
-
