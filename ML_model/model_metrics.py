@@ -79,7 +79,7 @@ Y_test_orig = Y_test
 # save the model
 model.save('model.h5')
 
-# PLOTS
+# PLOTS 
 history_dict = history.history
 history_len = len(history_dict['loss'])
 epochs = range(1, (history_len + 1))

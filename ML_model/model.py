@@ -70,7 +70,6 @@ for k in dct_grid_space:
 # se face produsul cu toate elementele din grid_values
 grid_combs = list(itertools.product(*grid_values))
 
-#TODO schimba linia 98, 99 ca sa fie pentru clasificare binara (1 neuron final, schimbi loss si activation)
 def create_model(l1, l2, l3, d1, d2, opt):
    model = Sequential()
    model.add(l1)
@@ -105,7 +104,6 @@ for combination in grid_combs:
       mode='max',
       save_best_only=True)
 
-   #TODO schimbi input_shape cu nr de coloane de features
    # combination = [l1_num, l2_num, d1, act1, act2,  opt, lr]
    l1 = Dense(combination[0], input_shape=(24, ), activation='relu')
    l2 = Dense(combination[1], activation='relu')
