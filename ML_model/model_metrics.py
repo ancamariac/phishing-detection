@@ -15,6 +15,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import f1_score
 
 best_config = [512, 1024, 512, 0.1, 0.3, 'adam', 0.01]
 
@@ -32,7 +33,7 @@ X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size=0.
 checkpoint_filepath = os.path.join(os.getcwd(), 'tmp', 'checkpoint')
 
 metrics = [
-         tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
+         tf.keras.metrics.BinaryAccuracy(name='accuracy'),
          tf.keras.metrics.Precision(),
          tf.keras.metrics.Recall(),
          tf.keras.metrics.AUC()
@@ -73,8 +74,8 @@ history = model.fit(X_train, Y_train, batch_size=512, epochs=100, validation_dat
 model.load_weights(checkpoint_filepath)
 scores = model.evaluate(X_test, Y_test)
 Y_pred_prob = model.predict(X_test)
-Y_pred = [1 if x >= 0.5 else 0 for x in Y_pred_prob]       
-Y_test_orig = Y_test
+
+Y_pred = [1 if x[0] >= 0.5 else 0 for x in Y_pred_prob]
 
 # save the model
 model.save('model.h5')
@@ -146,8 +147,8 @@ for i in range(history_len):
       val_prec_values[i] = 1
 
 plt.clf()
-f1_values = [2 * (x[0] * x[1]) / (x[0] + x[1]) for x in zip(prec_values, rec_values)]
-val_f1_values = [2 * (x[0] * x[1]) / (x[0] + x[1]) for x in zip(val_prec_values, val_rec_values)]
+f1_values = [f1_score(Y_test, Y_pred, zero_division=1)]
+val_f1_values = [f1_score(Y_val, model.predict(X_val) > 0.5, zero_division=1)] 
 
 plt.plot(epochs, acc_values, 'bo', label='Training F1 score')
 plt.plot(epochs, val_acc_values, 'b', label='Validation F1 score')
@@ -172,8 +173,8 @@ plt.show()
 # TEST DATA
 
 # confusion matrix
-labels = ['negative', 'neutral', 'positive']
-cm = confusion_matrix(Y_test_orig, Y_pred)
+labels = ['phishing', 'non-phishing']
+cm = confusion_matrix(Y_test, Y_pred)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
 disp.plot(cmap=plt.cm.Blues)
 plt.title('Confusion matrix')
@@ -183,10 +184,10 @@ plt.show()
 x_val = range(1, 6)
 labels = ['Accuracy', 'Precision', 'Recall', 'F1 Score', 'AUC']
 values = [
-    round(accuracy_score(Y_test_orig, Y_pred) * 100, 2),
-    round(precision_score(Y_test_orig, Y_pred, average='macro') * 100, 2),
-    round(recall_score(Y_test_orig, Y_pred, average='macro') * 100, 2),
-    round(f1_score(Y_test_orig, Y_pred, average='macro') * 100, 2),
+    round(accuracy_score(Y_test, Y_pred) * 100, 2),
+    round(precision_score(Y_test, Y_pred, average='macro') * 100, 2),
+    round(recall_score(Y_test, Y_pred, average='macro') * 100, 2),
+    round(f1_score(Y_test, Y_pred, average='macro') * 100, 2),
     round(roc_auc_score(Y_test, Y_pred_prob, multi_class='ovr') * 100, 2)
 ]
 
